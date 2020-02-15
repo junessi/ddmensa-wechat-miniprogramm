@@ -1,0 +1,6 @@
+<view class="weui-footer">
+  <view style="margin-top: 30px; margin-bottom: 10px; font-weight: bold; color: rgba(91, 111, 151, 0.7);">
+    德累斯顿食堂小程序
+  </view>
+  <view style="margin-bottom: 50px;">数据来源：Dresden Studentenwerk</view>
+</view>

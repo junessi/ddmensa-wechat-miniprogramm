@@ -1,0 +1,10 @@
+<!--miniprogram/pages/mealdetail/mealdetail.wxml-->
+<view>{{mealdetail.name}}</view>
+<view wx:for="{{mealdetail.prices}}" wx:for-index='key'>
+  <text>{{key}}: {{item}}</text>
+</view>
+
+<view wx:for="{{mealdetail.notes}}">
+  <text>{{item}}</text>
+</view>
+

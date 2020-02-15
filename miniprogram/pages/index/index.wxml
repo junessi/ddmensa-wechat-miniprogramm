@@ -1,0 +1,52 @@
+<!-- 引入模板 -->
+<import src="/pages/loading/loading.wxml" />
+
+<view class="page">
+  <view class="page__bd">
+
+    <!-- 首页顶置图片 -->
+    <view style="height: 150px;">
+      <image mode="aspectFill" src="/static/images/salattheke.jpg" style="width: 100%;height: 100%;" />
+    </view>
+
+    <view wx:if="{{loadingCanteens}}">
+      <template is="loading" data="{{show: true, msg: '努力加载中'}}" extClass="loading-bar" />
+    </view>
+    <view wx:else>
+      <view style="text-align: center; vertical-align: middle;margin-top: 10px;">
+        <span style="margin: 1.5em; color: rgba(0,0,0,0.7); font-size: 18px;">饿了么？点击食堂查看菜单</span>
+      </view>
+      <view style="text-align: center; vertical-align: middle;" wx:if="{{canteens.favorite.length == 0}}">
+        <span>
+          <icon type="info" size="14" />
+          <text style="font-size: 12px; margin-left: 4px;">滑动食堂可以置顶噢！</text>
+        </span>
+      </view>
+
+      <view class="weui-panel">
+        <view class="weui-panel__bd">
+
+          <!---------------    favorite canteens   --------------------->
+          <slideView buttons="{{unstickCanteenButtons}}" bindbuttontap="removefavoriteCanteen" wx:key="null" wx:for="{{canteens.favorite}}" slideItemData="{{item.id}}">
+            <navigator url="/pages/canteen/canteen?today={{today}}&canteenId={{item.id}}&canteenName={{item.name}}" style="border-top: 1px solid rgba(0, 0, 0, 0.1); background: #e7ffbc;">
+              <image src="/static/images/canteen_house.png" class="canteen-icon" />
+              <text class="canteen-name">{{item.name}}</text>
+            </navigator>
+          </slideView>
+
+          <!---------------    normal canteens   --------------------->
+          <slideView buttons="{{stickCanteenButtons}}" bindbuttontap="savefavoriteCanteen" wx:key="null" wx:for="{{canteens.normal}}" slideItemData="{{item.id}}">
+            <navigator url="/pages/canteen/canteen?today={{today}}&canteenId={{item.id}}&canteenName={{item.name}}" style="border-top: 1px solid rgba(0, 0, 0, 0.1);">
+              <image src="/static/images/canteen_house.png" class="canteen-icon" />
+              <text class="canteen-name">{{item.name}}</text>
+            </navigator>
+          </slideView>
+
+        </view>
+      </view>
+
+      <include src="/pages/footer/footer.wxml" />
+
+    </view>
+  </view>
+</view>

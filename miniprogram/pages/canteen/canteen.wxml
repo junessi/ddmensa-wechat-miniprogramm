@@ -1,0 +1,66 @@
+<!-- 引入模板 -->
+<import src="/pages/loading/loading.wxml" />
+
+<view class="page">
+  <view class="page__bd">
+
+    <!-------------  load dates  ------------->
+    <view wx:if="{{loadingDates}}">
+      <template is="loading" data="{{show: true, msg: '努力加载中'}}" extClass="loading-bar" />
+    </view>
+    <view wx:else>
+      <view style="flex-direction: row; flex-wrap: nowrap; display: flex; background: #ffffff;">
+        <view style="width: 30%; display: flex; justify-content: center;">
+          <view wx:if="{{isFirstDate == false}}" style="display: flex; align-items: center;" bindtap="dateBack">
+            <image src="/static/images/arrow_back.png" style="height: 40px; width: 20px;"></image>
+          </view>
+        </view>
+        <picker class="date-picker-bar" bindchange="dateSelected" value="{{dateIndex}}" range="{{dates_closed}}">
+          <text>{{selectedDate}}</text>
+        </picker>
+        <view style="width: 30%; display: flex; justify-content: center;">
+          <view wx:if="{{isLastDate == false}}" style="display: flex; align-items: center;" bindtap="dateNext">
+            <image src="/static/images/arrow_forward.png" style="height: 40px; width: 20px;"></image>
+          </view>
+        </view>
+      </view>
+
+      <!--------------------------  list meals  ------------------------>
+      <view wx:if="{{loadingMeals}}">
+        <template is="loading" data="{{show: true, msg: '一大波食物正在接近中'}}" extClass="loading-bar" />
+      </view>
+      <view wx:else>
+        <view wx:if="{{isCanteenClosed == false}}">
+          <view class="meal-preview" wx:for="{{meals}}">
+            <view class="weui-form-preview__bd">
+              <view>
+                <image mode="aspectFill" src="{{item.image}}" bindtap="previewMealImage" data-img-url="{{item.image}}" />
+              </view>
+              <view class="weui-form-preview__item">
+                <view class="meal-name">{{item.name}}</view>
+              </view>
+              <view class="weui-form-preview__item">
+                <view style="float: right; flex-direction: row; flex-wrap: nowrap; display: flex;">
+                  <view class="button-default">{{item.prices}}</view>
+                  <text style="width: 8px;"></text>
+                  <button class="button-info" data-mealinfo="{{item.notes}}" bindtap="showMealInfo">!</button>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view wx:else>
+          <view style="text-align: center; vertical-align: middle;margin-top: 40%; margin-bottom: 40%;">
+            <span>
+              <icon type="info" size="24" />
+              <text style="font-size: 20px; margin-left: 4px;">食堂在指定日期不开门噢！</text>
+            </span>
+          </view>
+        </view>
+
+        <halfScreenDialog bindbuttontap="buttontap" show="{{showMealInfoDialog}}" listdata="{{mealinfo}}" />
+        <include src="/pages/footer/footer.wxml" />
+      </view>
+    </view>
+  </view>
+</view>
