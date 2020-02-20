@@ -143,6 +143,10 @@ Component({
         listdata: {
           type: Array,
           value: []
+        },
+        showMore: {
+          type: Boolean,
+          value: true
         }
     },
     methods: {

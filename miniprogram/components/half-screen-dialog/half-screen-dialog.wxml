@@ -14,7 +14,7 @@
           <view class="weui-half-screen-dialog__title"><slot name="title"></slot></view>
         </block>
       </view>
-      <view class="weui-half-screen-dialog__hd__side">
+      <view wx:if="{{showMore}}" class="weui-half-screen-dialog__hd__side">
         <view class="weui-icon-btn weui-icon-btn_more">更多</view>
       </view>
     </view>

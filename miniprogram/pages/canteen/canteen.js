@@ -54,8 +54,10 @@ Page({
           wx.vrequest({
             url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days/" + options.today + "/meals",
             success: function (res) {
+              var meals = JSON.parse(res.data);
+              thisPage.pricesModifier(meals);
               thisPage.setData({
-                meals: JSON.parse(res.data),
+                meals: meals,
                 loadingDates: false,
                 loadingMeals: false
               })

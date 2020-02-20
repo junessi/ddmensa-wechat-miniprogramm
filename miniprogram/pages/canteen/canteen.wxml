@@ -58,7 +58,7 @@
           </view>
         </view>
 
-        <halfScreenDialog bindbuttontap="buttontap" show="{{showMealInfoDialog}}" listdata="{{mealinfo}}" />
+        <halfScreenDialog bindbuttontap="buttontap" closabled="{{false}}" showMore="{{false}}" show="{{showMealInfoDialog}}" listdata="{{mealinfo}}" />
         <include src="/pages/footer/footer.wxml" />
       </view>
     </view>
