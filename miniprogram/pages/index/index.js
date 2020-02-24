@@ -14,9 +14,10 @@ Page({
 
   onLoad: function() {
     var thisPage = this;
+    this.checkLoginStatus();
     wx.vrequest({
       url: app.globalData.apiBaseUrl + '/canteens',
-      success: function (res) {
+      success: function(res) {
         var date = new Date();
         var y = date.getFullYear(); // year
         var m = date.getMonth() + 1; //month
@@ -63,7 +64,7 @@ Page({
     return -1;
   },
 
-  getNormalCanteenIndex: function (canteenId) {
+  getNormalCanteenIndex: function(canteenId) {
     var allCanteens = this.getAllCanteens();
     if (allCanteens && allCanteens["normal"]) {
       for (var i in allCanteens["normal"]) {
@@ -80,7 +81,10 @@ Page({
     if (!wx.getStorageSync("canteens")) {
       wx.setStorage({
         key: "canteens",
-        data: {"favorite": [], "normal": this.sortCanteens(canteens)}
+        data: {
+          "favorite": [],
+          "normal": this.sortCanteens(canteens)
+        }
       })
     }
 
@@ -103,11 +107,13 @@ Page({
       this.sortCanteens(nCanteens);
 
       wx.setStorageSync("canteens", allCanteens);
-      this.setData({canteens: allCanteens});
+      this.setData({
+        canteens: allCanteens
+      });
     }
   },
 
-  removefavoriteCanteen: function (e) {
+  removefavoriteCanteen: function(e) {
     var canteenId = e.detail.slideItemData;
     var iFavorite = this.getFavoriteCanteenIndex(canteenId);
     var iNormal = this.getNormalCanteenIndex(canteenId);
@@ -123,12 +129,36 @@ Page({
       this.sortCanteens(nCanteens);
 
       wx.setStorageSync("canteens", allCanteens);
-      this.setData({ canteens: allCanteens });
+      this.setData({
+        canteens: allCanteens
+      });
     }
   },
 
   sortCanteens: function(canteens) {
     return canteens.sort((a, b) => a.name.localeCompare(b.name));
+  },
+
+  getUserInfo: function() {
+    wx.getUserInfo({
+      success: function (res) {
+        wx.setStorage({
+          key: 'userInfo',
+          data: res.userInfo
+        })
+      }
+    })
+  },
+
+  checkLoginStatus: function(e) {
+    var loggedIn = false;
+    if (wx.getStorageSync("userInfo")) {
+      loggedIn = true;
+    }
+
+    this.setData({
+      loggedIn: loggedIn
+    })
   }
 
 })

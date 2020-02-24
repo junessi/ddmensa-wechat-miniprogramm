@@ -19,7 +19,7 @@ App({
     }
 
     this.globalData = {
-      apiBaseUrl: "http://juhu.cloud/studentenwerk_api"
+      apiBaseUrl: "https://juhu.cloud/studentenwerk_api"
     }
   }
 })
