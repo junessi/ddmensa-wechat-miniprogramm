@@ -25,10 +25,9 @@ page {
   padding-left: 120rpx;
 }
 
-.userinfo-avatar {
-  width: 100rpx;
-  height: 100rpx;
-  margin: 20rpx;
+.user-avatar {
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background-size: cover;
   background-color: white;

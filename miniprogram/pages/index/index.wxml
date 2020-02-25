@@ -13,10 +13,10 @@
       <template is="loading" data="{{show: true, msg: '努力加载中'}}" extClass="loading-bar" />
     </view>
     <view wx:else>
-      <view style="text-align: center; vertical-align: middle;margin-top: 10px;">
-        <span style="margin: 1.5em; color: rgba(0,0,0,0.7); font-size: 18px;">饿了么？点击食堂查看菜单</span>
-        <view wx:if="{{loggedIn}}">icon</view>
-        <button wx:else open-type="getUserInfo" bindgetuserinfo="getUserInfo">授权登录</button>
+      <view style="vertical-align: middle;margin-top: 10px; flex-direction: row; flex-wrap: nowrap; display: flex;">
+        <span style="color: rgba(0,0,0,0.7); font-size: 18px; text-align: center; vertical-align: middle; width: 75%;">饿了么？点击食堂查看菜单</span>
+        <view wx:if="{{loggedIn}}"><image src="{{userInfo.avatarUrl}}" class="user-avatar" /></view>
+        <button wx:else open-type="getUserInfo" bindgetuserinfo="getUserInfo" style="width: 40px; padding: 0px 0px;"><image src="/static/images/user-unlogin.png" class="user-avatar" /></button>
       </view>
       <view style="text-align: center; vertical-align: middle;" wx:if="{{canteens.favorite.length == 0}}">
         <span>

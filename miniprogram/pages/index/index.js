@@ -6,7 +6,6 @@ Page({
   data: {
     avatarUrl: './user-unlogin.png',
     userInfo: {},
-    logged: false,
     takeSession: false,
     requestResult: '',
     loadingCanteens: true
@@ -140,24 +139,34 @@ Page({
   },
 
   getUserInfo: function() {
+    var thisPage = this;
     wx.getUserInfo({
       success: function (res) {
         wx.setStorage({
           key: 'userInfo',
           data: res.userInfo
-        })
+        });
+
+        thisPage.setData({
+          loggedIn: true,
+          userInfo: res.userInfo
+        });
+
       }
     })
   },
 
   checkLoginStatus: function(e) {
     var loggedIn = false;
-    if (wx.getStorageSync("userInfo")) {
+    var userInfo = wx.getStorageSync("userInfo");
+
+    if (userInfo) {
       loggedIn = true;
     }
 
     this.setData({
-      loggedIn: loggedIn
+      loggedIn: loggedIn,
+      userInfo: userInfo
     })
   }
 
