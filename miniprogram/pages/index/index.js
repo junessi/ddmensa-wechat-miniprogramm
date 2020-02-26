@@ -8,7 +8,8 @@ Page({
     userInfo: {},
     takeSession: false,
     requestResult: '',
-    loadingCanteens: true
+    loadingCanteens: true,
+    loggingIn: false
   },
 
   onLoad: function() {
@@ -41,7 +42,6 @@ Page({
           }],
           loadingCanteens: false
         });
-
       }
     });
   },
@@ -138,10 +138,12 @@ Page({
     return canteens.sort((a, b) => a.name.localeCompare(b.name));
   },
 
-  getUserInfo: function() {
+  login: function() {
+    this.setData({loggingIn: true});
+
     var thisPage = this;
     wx.getUserInfo({
-      success: function (res) {
+      success: function(res) {
         wx.setStorage({
           key: 'userInfo',
           data: res.userInfo
@@ -149,9 +151,9 @@ Page({
 
         thisPage.setData({
           loggedIn: true,
-          userInfo: res.userInfo
+          userInfo: res.userInfo,
+          loggingIn: false
         });
-
       }
     })
   },
@@ -168,6 +170,27 @@ Page({
       loggedIn: loggedIn,
       userInfo: userInfo
     })
+  },
+
+  logout: function(e) {
+    var thisPage = this;
+    wx.showModal({
+      title: '提示',
+      content: '您确定要退出登录吗？',
+      success: function(e) {
+        if (e.confirm) {
+          // 删除用户登录信息
+          wx.removeStorage({
+            key: 'userInfo'
+          })
+
+          // 修改登录状态
+          thisPage.setData({
+            loggedIn: false
+          });
+        }
+      }
+    });
   }
 
 })
