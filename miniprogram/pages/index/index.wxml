@@ -19,25 +19,27 @@
       <view wx:if="{{loggedIn}}">
         <!-----------------------------------  已登录 --------------------------------------------->
         <view style="vertical-align: middle;margin-top: 10px; flex-direction: row-reverse; flex-wrap: nowrap; display: flex;">
-          <view wx:if="{{loggedIn}}" style="width: 40px; margin-right: 40px;" bindtap="logout">
+          <view wx:if="{{loggedIn}}" style="width: 40px; margin-right: 40px; display: flex; align-items: center; justify-content: center;" bindtap="logout">
             <image src="{{userInfo.avatarUrl}}" class="user-avatar" />
           </view>
-          <view style="color: rgba(0,0,0,0.7); font-size: 18px; text-align: center; vertical-align: middle; width: 75%;">
+          <view style="color: rgba(0,0,0,0.7); font-size: 18px; display: flex; align-items: center; justify-content: center; width: 75%;">
             <text>饿了么？点击食堂查看菜单</text>
           </view>
         </view>
       </view>
       <view wx:else>
         <!-----------------------------------  未登录 --------------------------------------------->
-        <view style="vertical-align: middle;margin-top: 10px; flex-direction: row-reverse; flex-wrap: nowrap; display: flex;">
-          <view>
+        <view style="vertical-align: middle; margin-top: 10px; flex-direction: row-reverse; flex-wrap: nowrap; display: flex;">
+          <view style="display: flex; align-items: center; justify-content: center;">
             <button open-type="getUserInfo" bindgetuserinfo="login" style="width: 40px; padding: 0px 0px; margin-right: 30px;"><image src="/static/images/user-unlogin.png" class="user-avatar" /></button>
           </view>
-          <view style="color: rgba(0,0,0,0.7); font-size: 18px; text-align: center; vertical-align: middle; width: 75%;">
+          <view style="color: rgba(0,0,0,0.7); font-size: 18px; display: flex; align-items: center; justify-content: center; width: 75%;">
             <text>饿了么？点击食堂查看菜单</text>
           </view>
         </view>
       </view>
+
+
       <view style="text-align: center; vertical-align: middle;" wx:if="{{canteens.favorite.length == 0}}">
         <span>
           <icon type="info" size="14" />
