@@ -40,7 +40,10 @@
                 <view class="meal-name">{{item.name}}</view>
               </view>
               <view class="weui-form-preview__item">
-                <view style="float: right; flex-direction: row; flex-wrap: nowrap; display: flex;">
+                <view style="float: right; flex-direction: row; flex-wrap: nowrap; display: flex; width: 100%; margin-top: 8px;">
+                  <view style="height: 30px; width: 50%; display: flex; float: left;">
+                    <image style="width: 30px; height: 30px;" mode="widthFix" src="/static/images/unlike.png" />
+                  </view>
                   <view class="button-default">{{item.prices}}</view>
                   <text style="width: 8px;"></text>
                   <button class="button-info" data-mealinfo="{{item.notes}}" bindtap="showMealInfo">!</button>

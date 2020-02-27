@@ -31,7 +31,7 @@ Page({
 
         thisPage.setData({
           today: y + "-" + m + "-" + d,
-          canteens: thisPage.saveAllCanteens(JSON.parse(res.data)),
+          canteens: thisPage.saveAllCanteens(res.data),
           stickCanteenButtons: [{
             type: "primary",
             text: "置顶食堂"
