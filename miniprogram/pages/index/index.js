@@ -1,6 +1,7 @@
 //index.js
-const app = getApp()
+//import regeneratorRuntime from '../../lib/regenerator-runtime'
 
+const app = getApp()
 
 Page({
   data: {
@@ -15,6 +16,7 @@ Page({
   onLoad: function() {
     var thisPage = this;
     this.checkLoginStatus();
+
     wx.vrequest({
       url: app.globalData.apiBaseUrl + '/canteens',
       success: function(res) {
@@ -138,24 +140,85 @@ Page({
     return canteens.sort((a, b) => a.name.localeCompare(b.name));
   },
 
-  login: function() {
-    this.setData({loggingIn: true});
+  getLoginCode() {
+    return new Promise((resolve, reject) => {
+      wx.login({
+        success: function(res) {
+          if (res.code) {
+            resolve(res.code);
+          } else {
+            console.log("获取登录码失败");
+            resolve("");
+          }
+        }
+      });
+    });
+  },
 
+  getAppUserInfo(code) {
+    return new Promise((resolve, reject) => {
+      wx.checkSession({
+        success: function() {
+          wx.vrequest({
+            url: app.globalData.apiBaseUrl + '/wechat/user/login?code=' + code,
+            success: function(res) {
+              resolve(res);
+            }
+          });
+        },
+        // success: function () {
+        //console.log("密钥仍有效，无需重新获取。");
+        //}
+      })
+    });
+  },
+
+  getUserInfo() {
+    return new Promise((resolve, reject) => {
+      wx.getUserInfo({
+        success: function(res) {
+          var userInfo = res.userInfo;
+          userInfo.rawData = res.rawData;
+          userInfo.signature = res.signature;
+          resolve(userInfo);
+        }
+      })
+    });
+  },
+
+  async login() {
+    this.setData({
+      loggingIn: true
+    });
     var thisPage = this;
-    wx.getUserInfo({
-      success: function(res) {
-        wx.setStorage({
-          key: 'userInfo',
-          data: res.userInfo
-        });
+    var appUserInfo = null;
+    var code = await this.getLoginCode();
+    console.log("登录码: " + code);
 
-        thisPage.setData({
-          loggedIn: true,
-          userInfo: res.userInfo,
-          loggingIn: false
-        });
+    var userInfo = await this.getUserInfo();
+    console.log(userInfo.data);
+
+    if (code) {
+      appUserInfo = await this.getAppUserInfo(code);
+      console.log("AppUserInfo: ");
+      console.log(appUserInfo.data);
+
+      if (appUserInfo.data.status == 200) {
+        userInfo.userid = appUserInfo.data.user.id;
       }
-    })
+    }
+
+    console.log(userInfo);
+    wx.setStorage({
+      key: 'userInfo',
+      data: userInfo
+    });
+
+    thisPage.setData({
+      loggedIn: true,
+      userInfo: userInfo,
+      loggingIn: false
+    });
   },
 
   checkLoginStatus: function(e) {

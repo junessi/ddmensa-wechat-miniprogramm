@@ -26,7 +26,7 @@ Page({
     wx.vrequest({
       url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days",
       success: function (res) {
-        var dates = JSON.parse(res.data);
+        var dates = res.data;
         var dates_closed = [];
         var index = 0;
         for (var i in dates) {
@@ -54,7 +54,7 @@ Page({
           wx.vrequest({
             url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days/" + options.today + "/meals",
             success: function (res) {
-              var meals = JSON.parse(res.data);
+              var meals = res.data;
               thisPage.pricesModifier(meals);
               thisPage.setData({
                 meals: meals,
