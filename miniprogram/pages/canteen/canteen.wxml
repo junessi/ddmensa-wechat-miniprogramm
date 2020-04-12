@@ -42,7 +42,14 @@
               <view class="weui-form-preview__item">
                 <view style="float: right; flex-direction: row; flex-wrap: nowrap; display: flex; width: 100%; margin-top: 8px;">
                   <view style="height: 30px; width: 50%; display: flex; float: left;">
-                    <image style="width: 30px; height: 30px;" mode="widthFix" src="/static/images/unlike.png" />
+                    <view wx:if="{{item.likes == 0}}" bindtap="likeMeal" data-meal-id="{{item.id}}">
+                      <image style="width: 30px; height: 30px;" mode="widthFix" src="/static/images/unlike.png" />
+                      <text>{{item.likes}}</text>
+                    </view>
+                    <view wx:else bindtap="unlikeMeal" data-meal-id="{{item.id}}">
+                      <image style="width: 30px; height: 30px;" mode="widthFix" src="/static/images/like.png" />
+                      <text>{{item.likes}}</text>
+                    </view>
                   </view>
                   <view class="button-default">{{item.prices}}</view>
                   <text style="width: 8px;"></text>

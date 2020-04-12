@@ -147,7 +147,7 @@ Page({
           if (res.code) {
             resolve(res.code);
           } else {
-            console.log("获取登录码失败");
+            console.log("login: 获取登录码失败");
             resolve("");
           }
         }
@@ -167,7 +167,7 @@ Page({
           });
         },
         success: function () {
-          console.log("密钥仍有效，无需重新获取。");
+          console.log("login: 密钥仍有效，无需重新获取。");
           resolve({});
         }
       })
@@ -194,14 +194,14 @@ Page({
     var thisPage = this;
     var appUserInfo = null;
     var code = await this.getLoginCode();
-    console.log("登录码: " + code);
+    console.log("login: 登录码: " + code);
 
     var userId = 0;
     var userInfo = await this.getUserInfo();
 
     if (code) {
       appUserInfo = await this.getAppUserInfo(code);
-      console.log("AppUserInfo: ");
+      console.log("login: AppUserInfo: ");
       console.log(appUserInfo);
 
       if ("data" in appUserInfo) {
