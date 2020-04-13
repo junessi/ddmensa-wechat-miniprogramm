@@ -104,7 +104,7 @@ Page({
     });
   },
 
-  unlikeMeal: function(e) {
+  dislikeMeal: function(e) {
     var thisPage = this;
     var mealId = e.currentTarget.dataset.mealId;
     var mealIndex = e.currentTarget.dataset.mealIndex;
@@ -114,7 +114,7 @@ Page({
 
     wx.vrequest({
       url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId,
-      data: {"action": "unlike", "wechat_uid": userId},
+      data: {"action": "dislike", "wechat_uid": userId},
       success: function (res) {
         var result = res.data;
         var itemLikes = "meals[" + mealIndex + "].likes";
