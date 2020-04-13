@@ -51,10 +51,12 @@ Page({
 
         if (dates[index].closed == false) {
           var meals = [];
+          var userId = wx.getStorageSync("userId");
 
           // get meals on specified date
           wx.vrequest({
             url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days/" + options.today + "/meals",
+            data: {"wechat_uid": userId},
             success: function (res) {
               meals = res.data;
               thisPage.pricesModifier(meals);
@@ -78,34 +80,51 @@ Page({
   },
 
   likeMeal: function(e) {
+    var thisPage = this;
     var mealId = e.currentTarget.dataset.mealId;
+    var mealIndex = e.currentTarget.dataset.mealIndex;
     var userId = wx.getStorageSync("userId");
     var canteenId = this.data.canteenId;
     var today = this.data.dates[this.data.dateIndex].date;
+
     wx.vrequest({
-      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId + "/likes",
+      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId,
       data: {"action": "like", "wechat_uid": userId},
       success: function (res) {
         var result = res.data;
-        console.log("liked users: ");
-        console.log(result["liked_users"]);
+        var itemLikes = "meals[" + mealIndex + "].likes";
+        var itemLiked = "meals[" + mealIndex + "].liked";
+        var liked = result["liked"];
+        var likesCount = result["likes"];
+        thisPage.setData({
+          [itemLikes]: likesCount,
+          [itemLiked]: liked
+        })
       }
     });
   },
 
   unlikeMeal: function(e) {
+    var thisPage = this;
     var mealId = e.currentTarget.dataset.mealId;
-    var mealId = e.currentTarget.dataset.mealId;
+    var mealIndex = e.currentTarget.dataset.mealIndex;
     var userId = wx.getStorageSync("userId");
     var canteenId = this.data.canteenId;
     var today = this.data.dates[this.data.dateIndex].date;
+
     wx.vrequest({
-      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId + "/likes",
+      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId,
       data: {"action": "unlike", "wechat_uid": userId},
       success: function (res) {
         var result = res.data;
-        console.log("liked users: ");
-        console.log(result["liked_users"]);
+        var itemLikes = "meals[" + mealIndex + "].likes";
+        var itemLiked = "meals[" + mealIndex + "].liked";
+        var liked = result["liked"];
+        var likesCount = result["likes"];
+        thisPage.setData({
+          [itemLikes]: likesCount,
+          [itemLiked]: liked
+        })
       }
     });
   },
