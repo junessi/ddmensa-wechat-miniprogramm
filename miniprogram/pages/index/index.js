@@ -158,15 +158,25 @@ Page({
   getAppUserInfo(code) {
     return new Promise((resolve, reject) => {
       wx.checkSession({
-        fail: function() {
+        success: function() {
+          var userInfo = wx.getStorageSync('userInfo');
           wx.vrequest({
-            url: app.globalData.apiBaseUrl + '/wechat/user/login?code=' + code,
+            url: app.globalData.apiBaseUrl + '/wechat/user/login',
+            method: "POST",
+            header: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            data: {
+              "code": code,
+              "rawData": userInfo["rawData"],
+              "signature": userInfo["signature"]
+            },
             success: function(res) {
               resolve(res);
             }
           });
         },
-        success: function () {
+        fail: function () {
           console.log("login: 密钥仍有效，无需重新获取。");
           resolve({});
         }
@@ -199,6 +209,11 @@ Page({
     var userId = 0;
     var userInfo = await this.getUserInfo();
 
+    wx.setStorage({
+      key: 'userInfo',
+      data: userInfo
+    });
+
     if (code) {
       appUserInfo = await this.getAppUserInfo(code);
       console.log("login: AppUserInfo: ");
@@ -218,10 +233,6 @@ Page({
     wx.setStorage({
       key: 'userId',
       data: userId
-    });
-    wx.setStorage({
-      key: 'userInfo',
-      data: userInfo
     });
 
     thisPage.setData({
