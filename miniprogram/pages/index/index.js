@@ -207,6 +207,7 @@ Page({
     console.log("login: 登录码: " + code);
 
     var userId = 0;
+    var token = "";
     var userInfo = await this.getUserInfo();
 
     wx.setStorage({
@@ -219,20 +220,29 @@ Page({
       console.log("login: AppUserInfo: ");
       console.log(appUserInfo);
 
-      if ("data" in appUserInfo) {
-        // 用户session已过期，需重新获取用户信息。
+      if (appUserInfo) {
+        // appUserInfo不为空，重新获取从服务器返回的用户ID。
         userId = appUserInfo.data.user.id;
+        token = appUserInfo.data.user.token;
       }
       else {
+        // appUserInfo 为空则说明本地用户信息仍然有效。
         userId = wx.getStorageSync("userId");
       }
     }
 
-    console.log(userId);
+    console.log("userId: " + userId);
+    console.log("token: " + token);
     console.log(userInfo);
+
     wx.setStorage({
       key: 'userId',
       data: userId
+    });
+
+    wx.setStorage({
+      key: 'token',
+      data: token
     });
 
     thisPage.setData({
