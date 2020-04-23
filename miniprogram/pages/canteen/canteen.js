@@ -52,13 +52,26 @@ Page({
         if (dates[index].closed == false) {
           var meals = [];
           var userId = wx.getStorageSync("userId");
+          var token = wx.getStorageSync("token");
 
           // get meals on specified date
           wx.vrequest({
-            url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days/" + options.today + "/meals",
-            data: {"wechat_uid": userId},
+            url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days/" + options.today + "/meals/",
+            method: "POST",
+            header: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            data: {
+              "wechat_uid": userId,
+              "token": token
+            },
             success: function (res) {
-              meals = res.data;
+              meals = {};
+
+              if (res && ("data" in res)) {
+                meals = res.data;
+              }
+
               thisPage.pricesModifier(meals);
               thisPage.setData({
                 meals: meals,
@@ -80,6 +93,11 @@ Page({
   },
 
   likeMeal: function(e) {
+    if (!app.isLoggedIn()) {
+      // We should return if user is not logged in.
+      return;
+    }
+
     var thisPage = this;
     var mealId = e.currentTarget.dataset.mealId;
     var mealIndex = e.currentTarget.dataset.mealIndex;
@@ -125,6 +143,11 @@ Page({
   },
 
   dislikeMeal: function(e) {
+    if (!app.isLoggedIn()) {
+      // We should return if user is not logged in.
+      return;
+    }
+
     var thisPage = this;
     var mealId = e.currentTarget.dataset.mealId;
     var mealIndex = e.currentTarget.dataset.mealIndex;

@@ -278,6 +278,16 @@ Page({
             key: 'userInfo'
           })
 
+          // 删除用户id
+          wx.removeStorage({
+            key: 'userId'
+          })
+
+          // 删除用户token
+          wx.removeStorage({
+            key: 'token'
+          })
+
           // 修改登录状态
           thisPage.setData({
             loggedIn: false

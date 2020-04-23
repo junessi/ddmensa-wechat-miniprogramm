@@ -21,5 +21,13 @@ App({
     this.globalData = {
       apiBaseUrl: "https://junlin.de/studentenwerk_api"
     }
+  },
+
+  isLoggedIn() {
+    if (!wx.getStorageSync('token')) {
+      return false;
+    }
+
+    return true;
   }
 })
