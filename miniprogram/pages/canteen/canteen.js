@@ -4,6 +4,11 @@ Page({
   onLoad: function (options) {
     var thisPage = this;
 
+    // save current canteen data
+    wx.setStorageSync('currentCanteenId', options.canteenId);
+    wx.setStorageSync('currentCanteenName', options.canteenName);
+    wx.setStorageSync('today', options.today);
+
     console.log(options.canteenName);
     wx.setNavigationBarTitle({title: options.canteenName});
 
@@ -259,6 +264,15 @@ Page({
       fail: function (res) { },
       complete: function (res) { },
     })
+  },
+
+  refreshMeals: function() {
+    var options = {};
+    options["canteenId"] = wx.getStorageSync('currentCanteenId');
+    options["canteenName"] = wx.getStorageSync('currentCanteenName');
+    options["today"] = wx.getStorageSync('today');
+
+    this.onLoad(options);
   }
 
 });

@@ -9,16 +9,27 @@
       <template is="loading" data="{{show: true, msg: '努力加载中'}}" extClass="loading-bar" />
     </view>
     <view wx:else>
-      <view style="flex-direction: row; flex-wrap: nowrap; display: flex; background: #ffffff;">
-        <view style="width: 30%; display: flex; justify-content: center;">
+      <view style="width: 100%; height: 40px;">
+        <!-- place holder -->
+      </view>
+      <view style="flex-direction: row; flex-wrap: nowrap; display: flex; background: #ffffff;position:fixed;top:0;width:100%;">
+        <view style="width: 20%; display: flex; justify-content: center;">
           <view wx:if="{{isFirstDate == false}}" style="display: flex; align-items: center;" bindtap="dateBack">
             <image src="/static/images/arrow_back.png" style="height: 40px; width: 20px;"></image>
           </view>
         </view>
-        <picker class="date-picker-bar" bindchange="dateSelected" value="{{dateIndex}}" range="{{dates_closed}}">
-          <text>{{selectedDate}}</text>
-        </picker>
-        <view style="width: 30%; display: flex; justify-content: center;">
+        <view style="width: 10%; display: flex; justify-content: center;align-items: center;">
+          <!-- place holder -->
+        </view>
+        <view style="width: 40%; display: flex; justify-content: center;align-items: center;">
+          <picker class="date-picker-bar" bindchange="dateSelected" value="{{dateIndex}}" range="{{dates_closed}}">
+            <text>{{selectedDate}}</text>
+          </picker>
+        </view>
+        <view style="width: 8%; display: flex; justify-content: center;align-items: center;" bindtap="refreshMeals">
+          <image src="/static/images/refresh.png" style="height: 24px; width: 24px;"></image>
+        </view>
+        <view style="width: 20%; display: flex; justify-content: center;">
           <view wx:if="{{isLastDate == false}}" style="display: flex; align-items: center;" bindtap="dateNext">
             <image src="/static/images/arrow_forward.png" style="height: 40px; width: 20px;"></image>
           </view>
