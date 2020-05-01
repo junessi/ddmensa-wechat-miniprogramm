@@ -4,12 +4,7 @@ Page({
   onLoad: function (options) {
     var thisPage = this;
 
-    // save current canteen data
-    wx.setStorageSync('currentCanteenId', options.canteenId);
-    wx.setStorageSync('currentCanteenName', options.canteenName);
-    wx.setStorageSync('today', options.today);
-
-    console.log(options.canteenName);
+    console.log(options.canteenId + ": " + options.canteenName);
     wx.setNavigationBarTitle({title: options.canteenName});
 
     this.setData({
@@ -18,6 +13,8 @@ Page({
       dates_closed: [],
       selectedDate: "",
       canteenId: options.canteenId,
+      canteenName: options.canteenName,
+      currentDate: options.today,
       showMealInfoDialog: false,
       mealinfo: [],
       isFirstDate: false,
@@ -100,6 +97,7 @@ Page({
   likeMeal: function(e) {
     if (!app.isLoggedIn()) {
       // We should return if user is not logged in.
+      this.alertUnloggedIn();
       return;
     }
 
@@ -150,6 +148,7 @@ Page({
   dislikeMeal: function(e) {
     if (!app.isLoggedIn()) {
       // We should return if user is not logged in.
+      this.alertUnloggedIn();
       return;
     }
 
@@ -214,6 +213,9 @@ Page({
     var dates = this.data.dates;
     var selectedDate = dates[dateIndex].date;
     var dates_closed = this.data.dates_closed;
+    this.setData({
+      "currentDate" : selectedDate
+    });
 
     console.log("goto date: " + selectedDate);
     if (dates[dateIndex].closed == false) {
@@ -222,7 +224,7 @@ Page({
       wx.vrequest({
         url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + selectedDate + "/meals",
         success: function (res) {
-          var meals = JSON.parse(res.data);
+          var meals = res.data;
 
           thisPage.pricesModifier(meals);
 
@@ -267,12 +269,15 @@ Page({
   },
 
   refreshMeals: function() {
-    var options = {};
-    options["canteenId"] = wx.getStorageSync('currentCanteenId');
-    options["canteenName"] = wx.getStorageSync('currentCanteenName');
-    options["today"] = wx.getStorageSync('today');
+    this.gotoDate(parseInt(this.data.dateIndex));
+  },
 
-    this.onLoad(options);
+  alertUnloggedIn: function() {
+    wx.showToast({
+      title: '您尚未登录',
+      icon: "none",
+      duration: 2000
+    });
   }
 
 });
