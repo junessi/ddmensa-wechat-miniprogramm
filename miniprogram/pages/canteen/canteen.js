@@ -52,10 +52,11 @@ Page({
         });
 
         if (dates[index].closed == false) {
-          var meals = [];
           var userId = wx.getStorageSync("userId");
           var token = wx.getStorageSync("token");
 
+          thisPage.gotoDate(index);
+          /*
           // get meals on specified date
           wx.vrequest({
             url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days/" + options.today + "/meals/",
@@ -68,7 +69,7 @@ Page({
               "token": token
             },
             success: function (res) {
-              meals = {};
+              var meals = {};
 
               if (res && ("data" in res)) {
                 meals = res.data;
@@ -82,6 +83,7 @@ Page({
               })
             }
           });
+          */
         }
       }
     })
@@ -221,13 +223,27 @@ Page({
     if (dates[dateIndex].closed == false) {
       var thisPage = this;
       var canteenId = this.data.canteenId;
+      var userId = wx.getStorageSync("userId");
+      var token = wx.getStorageSync("token");
+
       wx.vrequest({
-        url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + selectedDate + "/meals",
+        url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + selectedDate + "/meals/",
+        method: "POST",
+        header: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data: {
+          "wechat_uid": userId,
+          "token": token
+        },
         success: function (res) {
-          var meals = res.data;
+          var meals = []; // no meal by default
+
+          if (res && ("data" in res)) {
+            meals = res.data;
+          }
 
           thisPage.pricesModifier(meals);
-
           thisPage.setData({
             meals: meals,
             isFirstDate: dateIndex == 0,
