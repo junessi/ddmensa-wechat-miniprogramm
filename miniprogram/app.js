@@ -1,7 +1,5 @@
 //app.js
 
-require("./utils/v-request.js");
-
 App({
   onLaunch: function () {
     
@@ -19,7 +17,7 @@ App({
     }
 
     this.globalData = {
-      apiBaseUrl: "https://junlin.de/studentenwerk_api"
+      apiBaseUrl: "https://juhu.info/studentenwerk_api"
     }
   },
 

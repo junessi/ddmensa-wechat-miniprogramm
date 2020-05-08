@@ -1,5 +1,4 @@
 //index.js
-//import regeneratorRuntime from '../../lib/regenerator-runtime'
 
 const app = getApp()
 
@@ -17,7 +16,7 @@ Page({
     var thisPage = this;
     this.checkLoginStatus();
 
-    wx.vrequest({
+    wx.request({
       url: app.globalData.apiBaseUrl + '/canteens',
       success: function(res) {
         var date = new Date();
@@ -160,7 +159,7 @@ Page({
       wx.checkSession({
         success: function() {
           var userInfo = wx.getStorageSync('userInfo');
-          wx.vrequest({
+          wx.request({
             url: app.globalData.apiBaseUrl + '/wechat/user/login',
             method: "POST",
             header: {

@@ -25,7 +25,7 @@ Page({
     });
 
     // get dates of canteen
-    wx.vrequest({
+    wx.request({
       url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days",
       success: function (res) {
         var dates = res.data;
@@ -52,38 +52,7 @@ Page({
         });
 
         if (dates[index].closed == false) {
-          var userId = wx.getStorageSync("userId");
-          var token = wx.getStorageSync("token");
-
           thisPage.gotoDate(index);
-          /*
-          // get meals on specified date
-          wx.vrequest({
-            url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days/" + options.today + "/meals/",
-            method: "POST",
-            header: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            data: {
-              "wechat_uid": userId,
-              "token": token
-            },
-            success: function (res) {
-              var meals = {};
-
-              if (res && ("data" in res)) {
-                meals = res.data;
-              }
-
-              thisPage.pricesModifier(meals);
-              thisPage.setData({
-                meals: meals,
-                loadingDates: false,
-                loadingMeals: false
-              })
-            }
-          });
-          */
         }
       }
     })
@@ -117,7 +86,7 @@ Page({
       [itemLiked]: true
     });
 
-    wx.vrequest({
+    wx.request({
       url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId + "/",
       method: "POST",
       header: {
@@ -169,7 +138,7 @@ Page({
       [itemLiked]: false
     });
 
-    wx.vrequest({
+    wx.request({
       url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId + "/",
       method: "POST",
       header: {
@@ -226,7 +195,7 @@ Page({
       var userId = wx.getStorageSync("userId");
       var token = wx.getStorageSync("token");
 
-      wx.vrequest({
+      wx.request({
         url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + selectedDate + "/meals/",
         method: "POST",
         header: {
