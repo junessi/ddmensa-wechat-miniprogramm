@@ -1,9 +1,7 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/canteen/canteen",
-    "pages/meals/meals",
-    "pages/mealdetail/mealdetail"
+    "pages/canteen/canteen"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
