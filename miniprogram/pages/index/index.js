@@ -200,7 +200,12 @@ Page({
     });
   },
 
-  async login() {
+  async login(e) {
+    if (!e.detail.userInfo) {
+      console.log("用户拒绝授权获取用户信息");
+      return;
+    }
+
     this.setData({
       loggingIn: true
     });
