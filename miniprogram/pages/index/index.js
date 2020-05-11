@@ -15,9 +15,6 @@ Page({
   onLoad: function() {
     var thisPage = this;
 
-    // 踩雷函数，很重要！
-    this.stepOnTheLandmine();
-
     this.checkLoginStatus();
 
     wx.request({
@@ -83,7 +80,7 @@ Page({
 
   saveAllCanteens: function(canteens) {
     if (!wx.getStorageSync("canteens")) {
-      wx.setStorage({
+      this.setStorage({
         key: "canteens",
         data: {
           "favorite": [],
@@ -110,7 +107,7 @@ Page({
       this.sortCanteens(fCanteens);
       this.sortCanteens(nCanteens);
 
-      wx.setStorageSync("canteens", allCanteens);
+      this.setStorageSync("canteens", allCanteens);
       this.setData({
         canteens: allCanteens
       });
@@ -132,7 +129,7 @@ Page({
       this.sortCanteens(fCanteens);
       this.sortCanteens(nCanteens);
 
-      wx.setStorageSync("canteens", allCanteens);
+      this.setStorageSync("canteens", allCanteens);
       this.setData({
         canteens: allCanteens
       });
@@ -209,7 +206,6 @@ Page({
     this.setData({
       loggingIn: true
     });
-    var thisPage = this;
     var appUserInfo = null;
     var code = await this.getLoginCode();
     console.log("login: 登录码: " + code);
@@ -218,7 +214,7 @@ Page({
     var token = "";
     var userInfo = await this.getUserInfo();
 
-    wx.setStorage({
+    this.setStorage({
       key: 'userInfo',
       data: userInfo
     });
@@ -243,17 +239,17 @@ Page({
     console.log("token: " + token);
     console.log(userInfo);
 
-    wx.setStorage({
+    this.setStorage({
       key: 'userId',
       data: userId
     });
 
-    wx.setStorage({
+    this.setStorage({
       key: 'token',
       data: token
     });
 
-    thisPage.setData({
+    this.setData({
       loggedIn: true,
       userInfo: userInfo,
       loggingIn: false
@@ -306,23 +302,31 @@ Page({
   },
 
   /**
-   * 踩雷函数
-   * 已知bug: 新用户在第一次打开小程序后第一次调用wx.setStorage()时会产生如下错误：
-   * setStorage: write DB data fail
-   * 此后再调用该函数就不会再产生此错误。因此需要在小程序启动时调用该函数把“雷”踩掉。
+   * 二次封装setStorage()
+   * 已知bug，见: https://developers.weixin.qq.com/community/develop/doc/00082c237aca00815c2897ba951400?_at=1567987200123
    **/
-  stepOnTheLandmine: function() {
-    try {
-      wx.setStorage("mine", "boom");
-    }
-    catch {
-    }
 
+  setStorage: function(key, value) {
     try {
-      wx.removeStorageSync('mine');
+      wx.setStorage(key, value);
     }
     catch {
-      // nothing to do
+      wx.setStorage(key, value);
+    }
+  },
+
+  /**
+   * 二次封装setStorageSync()
+   * 已知bug，见: https://developers.weixin.qq.com/community/develop/doc/00082c237aca00815c2897ba951400?_at=1567987200123
+   **/
+
+  setStorageSync: function(key, value) {
+    try {
+      wx.setStorageSync(key, value);
+    }
+    catch {
+      wx.setStorageSync(key, value);
     }
   }
+
 })
