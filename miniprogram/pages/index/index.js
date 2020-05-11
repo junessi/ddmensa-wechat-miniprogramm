@@ -14,6 +14,10 @@ Page({
 
   onLoad: function() {
     var thisPage = this;
+
+    // 踩雷函数，很重要！
+    this.stepOnTheLandmine();
+
     this.checkLoginStatus();
 
     wx.request({
@@ -21,11 +25,11 @@ Page({
       success: function(res) {
         var date = new Date();
         var y = date.getFullYear(); // year
-        var m = date.getMonth() + 1; //month
+        var m = date.getMonth() + 1; // month
         if (m < 10) {
           m = "0" + m;
         }
-        var d = date.getDate(); //day
+        var d = date.getDate(); // day
         if (d < 10) {
           d = "0" + d;
         }
@@ -294,6 +298,26 @@ Page({
         }
       }
     });
-  }
+  },
 
+  /**
+   * 踩雷函数
+   * 已知bug: 新用户在第一次打开小程序后第一次调用wx.setStorage()时会产生如下错误：
+   * setStorage: write DB data fail
+   * 此后再调用该函数就不会再产生此错误。因此需要在小程序启动时调用该函数把“雷”踩掉。
+   **/
+  stepOnTheLandmine: function() {
+    try {
+      wx.setStorage("mine", "boom");
+    }
+    catch {
+    }
+
+    try {
+      wx.removeStorageSync('mine');
+    }
+    catch {
+      // nothing to do
+    }
+  }
 })
