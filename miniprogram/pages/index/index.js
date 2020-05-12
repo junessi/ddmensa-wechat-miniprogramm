@@ -31,9 +31,16 @@ Page({
           d = "0" + d;
         }
 
+        // save canteen list
+        var canteenData = {
+          "favorite": [],
+          "normal": thisPage.sortCanteens(res.data)
+        };    
+        thisPage.saveAllCanteens(canteenData);
+
         thisPage.setData({
           today: y + "-" + m + "-" + d,
-          canteens: thisPage.saveAllCanteens(res.data),
+          canteens: canteenData,
           stickCanteenButtons: [{
             type: "primary",
             text: "置顶食堂"
@@ -78,18 +85,12 @@ Page({
     return -1;
   },
 
-  saveAllCanteens: function(canteens) {
+  saveAllCanteens: function(canteenData) {
     if (!wx.getStorageSync("canteens")) {
-      this.setStorage({
-        key: "canteens",
-        data: {
-          "favorite": [],
-          "normal": this.sortCanteens(canteens)
-        }
-      })
+      this.setStorageSync("canteens", canteenData);
     }
 
-    return this.getAllCanteens();
+    return canteenData;
   },
 
   savefavoriteCanteen: function(e) {
@@ -305,6 +306,11 @@ Page({
    * 二次封装setStorage()
    * 已知bug，见: https://developers.weixin.qq.com/community/develop/doc/00082c237aca00815c2897ba951400?_at=1567987200123
    **/
+  setStorage: function(data) {
+    if (("key" in data) && ("value" in data)) {
+      this.setStorage(data["key"], data["value"]);
+    }
+  },
 
   setStorage: function(key, value) {
     try {
@@ -319,6 +325,12 @@ Page({
    * 二次封装setStorageSync()
    * 已知bug，见: https://developers.weixin.qq.com/community/develop/doc/00082c237aca00815c2897ba951400?_at=1567987200123
    **/
+
+  setStorageSync: function(data) {
+    if (("key" in data) && ("value" in data)) {
+      this.setStorageSync(data["key"], data["value"]);
+    }
+  },
 
   setStorageSync: function(key, value) {
     try {
