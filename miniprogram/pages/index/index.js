@@ -32,15 +32,11 @@ Page({
         }
 
         // save canteen list
-        var canteenData = {
-          "favorite": [],
-          "normal": thisPage.sortCanteens(res.data)
-        };    
-        thisPage.saveAllCanteens(canteenData);
+        thisPage.saveAllCanteens(res.data);
 
         thisPage.setData({
           today: y + "-" + m + "-" + d,
-          canteens: canteenData,
+          canteens: thisPage.getAllCanteens(),
           stickCanteenButtons: [{
             type: "primary",
             text: "置顶食堂"
@@ -85,8 +81,13 @@ Page({
     return -1;
   },
 
-  saveAllCanteens: function(canteenData) {
+  saveAllCanteens: function(canteens) {
     if (!wx.getStorageSync("canteens")) {
+      var canteenData = {
+        "favorite": [],
+        "normal": this.sortCanteens(canteens)
+      };    
+  
       this.setStorageSync("canteens", canteenData);
     }
 
