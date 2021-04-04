@@ -86,8 +86,8 @@ Page({
       var canteenData = {
         "favorite": [],
         "normal": this.sortCanteens(canteens)
-      };    
-  
+      };
+
       this.setStorageSync("canteens", canteenData);
     }
 
