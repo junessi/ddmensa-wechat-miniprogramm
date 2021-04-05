@@ -164,19 +164,19 @@ Page({
     return "";
   },
 
+  async getUserInfo() {
+    const promisifiedWxGetUserInfo = this.promisify(wx.getUserInfo);
+    const res = await promisifiedWxGetUserInfo();
+    var userInfo = res.userInfo;
+    userInfo.rawData = res.rawData;
+    userInfo.signature = res.signature;
+    return userInfo;
+  },
+
   async getAppUserInfo(code) {
-    var appUserInfo = {};
-
-    const promisifiedWxCheckSession = this.promisify(wx.checkSession);
-    const ret = await promisifiedWxCheckSession();
-    if (("errMsg" in ret) && (ret["errMsg"] == "checkSession:ok")) {
-      console.log("login: 密钥仍有效，无需重新获取。");
-      return appUserInfo;
-    }
-
     const promisifiedWxRequest = this.promisify(wx.request);
-    var userInfo = wx.getStorageSync('userInfo');
-    appUserInfo = await promisifiedWxRequest({
+    const userInfo = wx.getStorageSync('userInfo');
+    return await promisifiedWxRequest({
       url: app.globalData.apiBaseUrl + '/wechat/user/login',
       method: "POST",
       header: {
@@ -188,46 +188,6 @@ Page({
         "signature": userInfo["signature"]
       }
     });
-
-    return appUserInfo;
-
-    /* before refactor
-    return new Promise((resolve, reject) => {
-      wx.checkSession({
-        success: function() {
-          var userInfo = wx.getStorageSync('userInfo');
-          wx.request({
-            url: app.globalData.apiBaseUrl + '/wechat/user/login',
-            method: "POST",
-            header: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            data: {
-              "code": code,
-              "rawData": userInfo["rawData"],
-              "signature": userInfo["signature"]
-            },
-            success: function(res) {
-              resolve(res);
-            }
-          });
-        },
-        fail: function () {
-          console.log("login: 密钥仍有效，无需重新获取。");
-          resolve({});
-        }
-      })
-    });
-    */
-  },
-
-  async getUserInfo() {
-    const promisifiedWxGetUserInfo = this.promisify(wx.getUserInfo);
-    const res = await promisifiedWxGetUserInfo();
-    var userInfo = res.userInfo;
-    userInfo.rawData = res.rawData;
-    userInfo.signature = res.signature;
-    return userInfo;
   },
 
   async login(e) {
@@ -259,7 +219,7 @@ Page({
       console.log("login: AppUserInfo: ");
       console.log(appUserInfo);
 
-      if (appUserInfo) {
+      if ("data" in appUserInfo && "user" in appUserInfo.data) {
         // appUserInfo不为空，重新获取从服务器返回的用户ID。
         userId = appUserInfo.data.user.id;
         token = appUserInfo.data.user.token;
