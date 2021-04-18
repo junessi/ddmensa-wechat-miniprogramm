@@ -31,7 +31,7 @@
         <!-----------------------------------  未登录 --------------------------------------------->
         <view style="vertical-align: middle; margin-top: 10px; flex-direction: row-reverse; flex-wrap: nowrap; display: flex;">
           <view style="display: flex; align-items: center; justify-content: center;">
-            <button open-type="getUserInfo" bindgetuserinfo="login" style="width: 40px; height: 30px; padding: 0px 0px; margin-right: 10px;"><image src="/static/images/user-unlogin.png" class="user-avatar" /></button>
+            <button bindtap="startLogin" style="width: 40px; height: 30px; padding: 0px 0px; margin-right: 10px;"><image src="/static/images/user-unlogin.png" class="user-avatar" /></button>
           </view>
           <view style="color: rgba(0,0,0,0.7); font-size: 18px; display: flex; align-items: center; justify-content: center; width: 75%;">
             <text>饿了么？点击食堂查看菜单</text>

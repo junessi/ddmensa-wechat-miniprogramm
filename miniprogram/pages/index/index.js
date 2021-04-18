@@ -190,29 +190,84 @@ Page({
     });
   },
 
-  async login(e) {
+  startLogin() {
+    /*
     if (!e.detail.userInfo) {
       console.log("用户拒绝授权获取用户信息");
       return;
     }
+    */
+    const thisPage = this;
+    wx.getUserProfile({
+      desc: 'get user profile',
+      success: (res) => {
+        var loginCxt = {userInfo: res.userInfo};
+        this.setData({
+          userInfo: res.userInfo,
+          hasUserInfo: true
+        });
+
+        // next step: get login code
+        thisPage.getLoginCode(loginCxt);
+      }
+    });
+  },
+
+  getLoginCode(loginCxt) {
+    const thisPage = this;
+    wx.login({
+      success: (res) => {
+        if ("code" in res) {
+          loginCxt.loginCode = res.code;
+          thisPage.getAppUserInfo(loginCxt);
+        }
+      }
+    });
+  },
+
+  getAppUserInfo(loginCxt) {
+    const userInfo = loginCxt.userInfo;
+    const code = loginCxt.loginCode;
+    const thisPage = this;
+    wx.request({
+      url: app.globalData.apiBaseUrl + '/wechat/user/login',
+      method: "POST",
+      header: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      data: {
+        "code": code,
+        "rawData": userInfo["rawData"],
+        "signature": userInfo["signature"]
+      },
+      success: (res) => {
+        loginCxt['userId'] = res.data.user.id;
+        loginCxt['token'] = res.data.user.token;
+        thisPage.finishLogin(loginCxt);
+      }
+    });
+  },
+
+  finishLogin(loginCxt) {
+    console.log(loginCxt);
 
     this.setData({
       loggingIn: true
     });
+
+    /*
     var appUserInfo = null;
     var code = await this.getLoginCode();
     console.log("login: 登录码: " + code);
 
+    const promisifiedWxGetUserProfile = this.promisify(wx.getUserProfile);
+    const userProfile = await promisifiedWxGetUserProfile({desc: "get user profile"});
+
     var userId = 0;
     var token = "";
-    var userInfo = await this.getUserInfo();
-    console.log("login: userInfo:");
-    console.log(userInfo);
-
-    this.setStorage({
-      key: 'userInfo',
-      data: userInfo
-    });
+    // var userProfile = await this.getUserProfile();
+    console.log("login: userProfile:");
+    console.log(userProfile);
 
     if (code) {
       appUserInfo = await this.getAppUserInfo(code);
@@ -229,10 +284,20 @@ Page({
         userId = wx.getStorageSync("userId");
       }
     }
+    */
 
+    const userInfo = loginCxt.userInfo;
+    const userId = loginCxt.userId;
+    const token = loginCxt.token;
+
+    console.log(userInfo);
     console.log("userId: " + userId);
     console.log("token: " + token);
-    console.log(userInfo);
+
+    this.setStorage({
+      key: 'userInfo',
+      data: userInfo
+    });
 
     this.setStorage({
       key: 'userId',
