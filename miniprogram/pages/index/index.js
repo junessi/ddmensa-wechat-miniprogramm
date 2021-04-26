@@ -255,37 +255,6 @@ Page({
       loggingIn: true
     });
 
-    /*
-    var appUserInfo = null;
-    var code = await this.getLoginCode();
-    console.log("login: 登录码: " + code);
-
-    const promisifiedWxGetUserProfile = this.promisify(wx.getUserProfile);
-    const userProfile = await promisifiedWxGetUserProfile({desc: "get user profile"});
-
-    var userId = 0;
-    var token = "";
-    // var userProfile = await this.getUserProfile();
-    console.log("login: userProfile:");
-    console.log(userProfile);
-
-    if (code) {
-      appUserInfo = await this.getAppUserInfo(code);
-      console.log("login: AppUserInfo: ");
-      console.log(appUserInfo);
-
-      if ("data" in appUserInfo && "user" in appUserInfo.data) {
-        // appUserInfo不为空，重新获取从服务器返回的用户ID。
-        userId = appUserInfo.data.user.id;
-        token = appUserInfo.data.user.token;
-      }
-      else {
-        // appUserInfo 为空则说明本地用户信息仍然有效。
-        userId = wx.getStorageSync("userId");
-      }
-    }
-    */
-
     const userInfo = loginCxt.userInfo;
     const userId = loginCxt.userId;
     const token = loginCxt.token;
@@ -294,17 +263,17 @@ Page({
     console.log("userId: " + userId);
     console.log("token: " + token);
 
-    this.setStorage({
+    wx.setStorageSync({
       key: 'userInfo',
       data: userInfo
     });
 
-    this.setStorage({
+    wx.setStorageSync({
       key: 'userId',
       data: userId
     });
 
-    this.setStorage({
+    wx.setStorageSync({
       key: 'token',
       data: token
     });
@@ -359,45 +328,6 @@ Page({
         }
       }
     });
-  },
-
-  /**
-   * 二次封装setStorage()
-   * 已知bug，见: https://developers.weixin.qq.com/community/develop/doc/00082c237aca00815c2897ba951400?_at=1567987200123
-   **/
-  setStorage: function(data) {
-    if (("key" in data) && ("value" in data)) {
-      this.setStorage(data["key"], data["value"]);
-    }
-  },
-
-  setStorage: function(key, value) {
-    try {
-      wx.setStorage(key, value);
-    }
-    catch {
-      wx.setStorage(key, value);
-    }
-  },
-
-  /**
-   * 二次封装setStorageSync()
-   * 已知bug，见: https://developers.weixin.qq.com/community/develop/doc/00082c237aca00815c2897ba951400?_at=1567987200123
-   **/
-
-  setStorageSync: function(data) {
-    if (("key" in data) && ("value" in data)) {
-      this.setStorageSync(data["key"], data["value"]);
-    }
-  },
-
-  setStorageSync: function(key, value) {
-    try {
-      wx.setStorageSync(key, value);
-    }
-    catch {
-      wx.setStorageSync(key, value);
-    }
   }
 
 })
