@@ -1,6 +1,18 @@
 const app = getApp()
 
 Page({
+  promisify: function(fn) {
+    return async function(args) {
+        return new Promise((resolve, reject) => {
+            fn({
+                ...(args || {}),
+                success: res => resolve(res),
+                fail: err => reject(err)
+            });
+        });
+    };
+  },
+
   onLoad: function (options) {
     var thisPage = this;
 
@@ -17,6 +29,7 @@ Page({
       currentDate: options.today,
       showMealInfoDialog: false,
       mealinfo: [],
+      cachedMealIds: [],
       isFirstDate: false,
       isLastDate: false,
       isCanteenClosed: false,
@@ -24,9 +37,13 @@ Page({
       loadingMeals: true
     });
 
-    // get dates of canteen
+    this.getCachedMealIds(options.canteenId);
+  },
+
+  getDatesOfCanteen: function(canteenId) {
+    var thisPage = this;
     wx.request({
-      url: app.globalData.apiBaseUrl + "/canteens/" + options.canteenId + "/days",
+      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days",
       success: function (res) {
         var dates = res.data;
         var dates_closed = [];
@@ -34,7 +51,7 @@ Page({
         for (var i in dates) {
           dates_closed.push(dates[i].date + (dates[i].closed ? " (closed)" : ""));
 
-          if (dates[i].date == options.today) {
+          if (dates[i].date == thisPage.currentDate) {
             index = i;
           }
         }
@@ -55,9 +72,9 @@ Page({
           thisPage.gotoDate(index);
         }
       }
-    })
+    });
   },
-
+  
   showMealInfo: function (e) {
     this.setData({
       showMealInfoDialog: true,
@@ -168,6 +185,18 @@ Page({
     });
   },
 
+  getCachedMealIds: function(canteenId) {
+    var thisPage = this;
+    wx.request({
+      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/cached_meals",
+      success: function (res) {
+        thisPage.cachedMealIds = res.data.cached_meals;
+        console.log("Cached meal ids: " + thisPage.cachedMealIds);
+        thisPage.getDatesOfCanteen(canteenId);
+      }
+    })
+  },
+
   dateSelected: function (e) {
     this.gotoDate(parseInt(e.detail.value));
   },
@@ -212,7 +241,7 @@ Page({
             meals = res.data;
           }
 
-          thisPage.pricesModifier(meals);
+          thisPage.mealsPreprocessor(meals);
           thisPage.setData({
             meals: meals,
             isFirstDate: dateIndex == 0,
@@ -232,15 +261,20 @@ Page({
     });
   },
 
-  pricesModifier: function(meals) {
+  mealsPreprocessor: function(meals) {
     for (var i in meals) {
+      // beautify prices
       var prices = meals[i].prices;
       var arr = [];
       for (var j in prices) {
         arr.push(Number(prices[j]).toFixed(2) + " €");
       }
       meals[i].prices = "" + arr.join(" / ")
+
+      // set "sold out" flag
+      meals[i].soldout = !this.cachedMealIds.includes(meals[i].id);
     }
+
   },
 
   previewMealImage: function(e) {

@@ -154,6 +154,7 @@ Page({
     };
   },
 
+  /*
   async getLoginCode() {
     const promisifiedWxLogin = this.promisify(wx.login);
     const res = await promisifiedWxLogin();
@@ -189,6 +190,7 @@ Page({
       }
     });
   },
+  */
 
   startLogin() {
     /*
