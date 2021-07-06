@@ -45,6 +45,7 @@
           <view class="meal-preview" wx:for="{{meals}}" wx:for-index="mealIndex">
             <view class="weui-form-preview__bd">
               <view>
+                <image wx:if="{{item.soldout}}" mode="aspectFit" style="position:absolute" src="/static/images/soldout.png" bindtap="previewMealImage" data-img-url="/static/images/soldout.png" />
                 <image mode="aspectFill" src="{{item.image}}" bindtap="previewMealImage" data-img-url="{{item.image}}" />
               </view>
               <view class="weui-form-preview__item">
@@ -52,8 +53,7 @@
               </view>
               <view class="weui-form-preview__item">
                 <view style="float: right; flex-direction: row; flex-wrap: nowrap; display: flex; width: 100%; margin-top: 8px;">
-                  <view wx:if="{{item.soldout}}" style="height: 30px; width: 50%; display: flex; float: left;">
-                    <image style="width: 30px; height: 30px;" mode="widthFix" src="/static/images/like.png" />
+                  <view style="height: 30px; width: 50%; display: flex; float: left;">
                   </view>
                   <view class="button-default">{{item.prices}}</view>
                   <text style="width: 8px;"></text>

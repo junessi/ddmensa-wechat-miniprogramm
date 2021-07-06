@@ -1,18 +1,6 @@
 const app = getApp()
 
 Page({
-  promisify: function(fn) {
-    return async function(args) {
-        return new Promise((resolve, reject) => {
-            fn({
-                ...(args || {}),
-                success: res => resolve(res),
-                fail: err => reject(err)
-            });
-        });
-    };
-  },
-
   onLoad: function (options) {
     var thisPage = this;
 
@@ -26,7 +14,7 @@ Page({
       selectedDate: "",
       canteenId: options.canteenId,
       canteenName: options.canteenName,
-      currentDate: options.today,
+      today: options.today,
       showMealInfoDialog: false,
       mealinfo: [],
       cachedMealIds: [],
@@ -37,13 +25,13 @@ Page({
       loadingMeals: true
     });
 
-    this.getCachedMealIds(options.canteenId);
+    this.getCachedMealIds();
   },
 
-  getDatesOfCanteen: function(canteenId) {
+  getDatesOfCanteen: function() {
     var thisPage = this;
     wx.request({
-      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days",
+      url: app.globalData.apiBaseUrl + "/canteens/" + this.data.canteenId + "/days",
       success: function (res) {
         var dates = res.data;
         var dates_closed = [];
@@ -51,7 +39,7 @@ Page({
         for (var i in dates) {
           dates_closed.push(dates[i].date + (dates[i].closed ? " (closed)" : ""));
 
-          if (dates[i].date == thisPage.currentDate) {
+          if (dates[i].date == thisPage.data.today) {
             index = i;
           }
         }
@@ -185,14 +173,14 @@ Page({
     });
   },
 
-  getCachedMealIds: function(canteenId) {
+  getCachedMealIds: function() {
     var thisPage = this;
     wx.request({
-      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/cached_meals",
+      url: app.globalData.apiBaseUrl + "/canteens/" + this.data.canteenId + "/cached_meals",
       success: function (res) {
-        thisPage.cachedMealIds = res.data.cached_meals;
-        console.log("Cached meal ids: " + thisPage.cachedMealIds);
-        thisPage.getDatesOfCanteen(canteenId);
+        thisPage.data.cachedMealIds = res.data.cached_meals;
+        console.log("Cached meal ids: " + thisPage.data.cachedMealIds);
+        thisPage.getDatesOfCanteen();
       }
     })
   },
@@ -214,7 +202,7 @@ Page({
     var selectedDate = dates[dateIndex].date;
     var dates_closed = this.data.dates_closed;
     this.setData({
-      "currentDate" : selectedDate
+      "today" : selectedDate
     });
 
     console.log("goto date: " + selectedDate);
@@ -272,9 +260,8 @@ Page({
       meals[i].prices = "" + arr.join(" / ")
 
       // set "sold out" flag
-      meals[i].soldout = !this.cachedMealIds.includes(meals[i].id);
+      meals[i].soldout = !this.data.cachedMealIds.includes(meals[i].id);
     }
-
   },
 
   previewMealImage: function(e) {
