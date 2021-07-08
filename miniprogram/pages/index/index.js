@@ -15,8 +15,6 @@ Page({
   onLoad: function() {
     var thisPage = this;
 
-    this.checkLoginStatus();
-
     wx.request({
       url: app.globalData.apiBaseUrl + '/canteens',
       success: function(res) {
@@ -88,7 +86,7 @@ Page({
         "normal": this.sortCanteens(canteens)
       };
 
-      this.setStorageSync("canteens", canteenData);
+      wx.setStorageSync("canteens", canteenData);
     }
 
     return canteenData;
@@ -109,7 +107,7 @@ Page({
       this.sortCanteens(fCanteens);
       this.sortCanteens(nCanteens);
 
-      this.setStorageSync("canteens", allCanteens);
+      wx.setStorageSync("canteens", allCanteens);
       this.setData({
         canteens: allCanteens
       });
@@ -131,7 +129,7 @@ Page({
       this.sortCanteens(fCanteens);
       this.sortCanteens(nCanteens);
 
-      this.setStorageSync("canteens", allCanteens);
+      wx.setStorageSync("canteens", allCanteens);
       this.setData({
         canteens: allCanteens
       });
@@ -142,6 +140,7 @@ Page({
     return canteens.sort((a, b) => a.name.localeCompare(b.name));
   },
 
+  /*
   promisify: function(fn) {
     return async function(args) {
         return new Promise((resolve, reject) => {
@@ -153,6 +152,7 @@ Page({
         });
     };
   },
+  */
 
   /*
   async getLoginCode() {
@@ -192,13 +192,8 @@ Page({
   },
   */
 
+  /*
   startLogin() {
-    /*
-    if (!e.detail.userInfo) {
-      console.log("用户拒绝授权获取用户信息");
-      return;
-    }
-    */
     const thisPage = this;
     wx.getUserProfile({
       desc: 'get user profile',
@@ -331,5 +326,6 @@ Page({
       }
     });
   }
+  */
 
 })

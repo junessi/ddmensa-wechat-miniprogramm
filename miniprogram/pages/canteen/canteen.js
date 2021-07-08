@@ -173,28 +173,68 @@ Page({
     });
   },
 
-  getCachedMealIds: function() {
+  promisify: function(fn) {
+    return async function(args) {
+        return new Promise((resolve, reject) => {
+            fn({
+                ...(args || {}),
+                success: res => resolve(res),
+                fail: err => reject(err)
+            });
+        });
+    };
+  },
+
+  async getCachedMealIds() {
     var thisPage = this;
     wx.request({
-      url: app.globalData.apiBaseUrl + "/canteens/" + this.data.canteenId + "/cached_meals",
+      url: app.globalData.apiBaseUrl + "/canteens/" + this.data.canteenId + "/cached_meals/" + this.data.today,
       success: function (res) {
         thisPage.data.cachedMealIds = res.data.cached_meals;
         console.log("Cached meal ids: " + thisPage.data.cachedMealIds);
         thisPage.getDatesOfCanteen();
       }
-    })
+    });
   },
 
   dateSelected: function (e) {
-    this.gotoDate(parseInt(e.detail.value));
+    var thisPage = this;
+    const dateIndex = parseInt(e.detail.value);
+    const date = this.data.dates[dateIndex].date;
+    wx.request({
+      url: app.globalData.apiBaseUrl + "/canteens/" + this.data.canteenId + "/cached_meals/" + date,
+      success: function (res) {
+        thisPage.data.cachedMealIds = res.data.cached_meals;
+        console.log("Cached meal ids: " + thisPage.data.cachedMealIds);
+        thisPage.gotoDate(dateIndex);
+      }
+    });
   },
 
   dateBack: function (e) {
-    this.gotoDate(parseInt(this.data.dateIndex) - 1);
+    var thisPage = this;
+    const date = this.data.dates[parseInt(this.data.dateIndex) - 1].date;
+    wx.request({
+      url: app.globalData.apiBaseUrl + "/canteens/" + this.data.canteenId + "/cached_meals/" + date,
+      success: function (res) {
+        thisPage.data.cachedMealIds = res.data.cached_meals;
+        console.log("Cached meal ids: " + thisPage.data.cachedMealIds);
+        thisPage.gotoDate(parseInt(thisPage.data.dateIndex) - 1);
+      }
+    });
   },
 
   dateNext: function (e) {
-    this.gotoDate(parseInt(this.data.dateIndex) + 1);
+    var thisPage = this;
+    const date = this.data.dates[parseInt(this.data.dateIndex) + 1].date;
+    wx.request({
+      url: app.globalData.apiBaseUrl + "/canteens/" + this.data.canteenId + "/cached_meals/" + date,
+      success: function (res) {
+        thisPage.data.cachedMealIds = res.data.cached_meals;
+        console.log("Cached meal ids: " + thisPage.data.cachedMealIds);
+        thisPage.gotoDate(parseInt(thisPage.data.dateIndex) + 1);
+      }
+    });
   },
 
   gotoDate: function(dateIndex) {
@@ -276,14 +316,5 @@ Page({
 
   refreshMeals: function() {
     this.gotoDate(parseInt(this.data.dateIndex));
-  },
-
-  alertUnloggedIn: function() {
-    wx.showToast({
-      title: '您尚未登录',
-      icon: "none",
-      duration: 2000
-    });
   }
-
 });
