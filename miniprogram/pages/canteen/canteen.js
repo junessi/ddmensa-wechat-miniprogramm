@@ -46,6 +46,7 @@ Page({
 
         thisPage.setData({
           dateIndex: index,
+          dateIndexOfToday: index,
           selectedDate: dates_closed[index],
           dates: dates,
           dates_closed: dates_closed,
@@ -68,109 +69,6 @@ Page({
       showMealInfoDialog: true,
       mealinfo: e.currentTarget.dataset.mealinfo
     })
-  },
-
-  likeMeal: function(e) {
-    if (!app.isLoggedIn()) {
-      // We should return if user is not logged in.
-      this.alertUnloggedIn();
-      return;
-    }
-
-    var thisPage = this;
-    var mealId = e.currentTarget.dataset.mealId;
-    var mealIndex = e.currentTarget.dataset.mealIndex;
-    var userId = wx.getStorageSync("userId");
-    var token = wx.getStorageSync("token");
-    var canteenId = this.data.canteenId;
-    var today = this.data.dates[this.data.dateIndex].date;
-    var itemLikes = "meals[" + mealIndex + "].likes";
-    var itemLiked = "meals[" + mealIndex + "].liked";
-
-    this.setData({
-      [itemLiked]: true
-    });
-
-    wx.request({
-      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId + "/",
-      method: "POST",
-      header: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      data: {
-        "action": "like",
-        "wechat_uid": userId,
-        "token": token
-    },
-    success: function (res) {
-        var result = res.data;
-        if (result["status"] == 200) {
-          var liked = result["liked"];
-          var likesCount = result["likes"];
-          thisPage.setData({
-            [itemLikes]: likesCount,
-            [itemLiked]: liked
-          });
-        }
-        else {
-          thisPage.setData({
-            [itemLiked]: false
-          });      
-        }
-      }
-    });
-  },
-
-  dislikeMeal: function(e) {
-    if (!app.isLoggedIn()) {
-      // We should return if user is not logged in.
-      this.alertUnloggedIn();
-      return;
-    }
-
-    var thisPage = this;
-    var mealId = e.currentTarget.dataset.mealId;
-    var mealIndex = e.currentTarget.dataset.mealIndex;
-    var userId = wx.getStorageSync("userId");
-    var token = wx.getStorageSync("token");
-    var canteenId = this.data.canteenId;
-    var today = this.data.dates[this.data.dateIndex].date;
-
-    var itemLikes = "meals[" + mealIndex + "].likes";
-    var itemLiked = "meals[" + mealIndex + "].liked";
-
-    this.setData({
-      [itemLiked]: false
-    });
-
-    wx.request({
-      url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + today + "/meals/" + mealId + "/",
-      method: "POST",
-      header: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      data: {
-        "action": "dislike",
-        "wechat_uid": userId,
-        "token": token
-      },
-      success: function (res) {
-        var result = res.data;
-        if (result["status"] == 200) {
-          var liked = result["liked"];
-          var likesCount = result["likes"];
-          thisPage.setData({
-            [itemLikes]: likesCount,
-            [itemLiked]: liked
-          });
-        }
-        else {
-          thisPage.setData({
-            [itemLiked]: true
-          });      
-        }
-      }
-    });
   },
 
   promisify: function(fn) {
@@ -242,7 +140,8 @@ Page({
     var selectedDate = dates[dateIndex].date;
     var dates_closed = this.data.dates_closed;
     this.setData({
-      "today" : selectedDate
+      "today" : selectedDate,
+      "futureDate": (dateIndex > this.data.dateIndexOfToday)
     });
 
     console.log("goto date: " + selectedDate);
@@ -300,7 +199,7 @@ Page({
       meals[i].prices = "" + arr.join(" / ")
 
       // set "sold out" flag
-      meals[i].soldout = !this.data.cachedMealIds.includes(meals[i].id);
+      meals[i].soldout = !this.data.futureDate && !this.data.cachedMealIds.includes(meals[i].id);
     }
   },
 
