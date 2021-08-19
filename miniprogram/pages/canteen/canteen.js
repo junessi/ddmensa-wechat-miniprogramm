@@ -8,6 +8,7 @@ Page({
     wx.setNavigationBarTitle({title: options.canteenName});
 
     this.setData({
+      baseUrl: app.globalData.apiBaseUrl,
       dateIndex: 0,
       dates: [],
       dates_closed: [],
@@ -63,7 +64,7 @@ Page({
       }
     });
   },
-  
+
   showMealInfo: function (e) {
     this.setData({
       showMealInfoDialog: true,
@@ -176,6 +177,41 @@ Page({
             loadingDates: false,
             loadingMeals: false
           })
+
+          // lazy-load soldout meals
+          var soldout_meal_ids = [];
+          var meal_ids = [];
+          for (var i in meals) {
+            meal_ids.push(meals[i].id);
+          }
+
+          for (var i in thisPage.data.cachedMealIds) {
+            if (!meal_ids.includes(thisPage.data.cachedMealIds[i])) {
+              soldout_meal_ids.push(thisPage.data.cachedMealIds[i]);
+            }
+          }
+
+          for (var i in soldout_meal_ids) {
+            wx.request({
+              url: app.globalData.apiBaseUrl + "/canteens/" + canteenId + "/days/" + selectedDate + "/meals/" + soldout_meal_ids[i],
+              success: function (res) {
+                var meal = res.data;
+                if ('id' in meal) {
+                  var prices = meal.prices;
+                  var arr = [];
+                  for (var j in prices) {
+                    arr.push(Number(prices[j]).toFixed(2) + " €");
+                  }
+                  meal.prices = "" + arr.join(" / ")
+                  meal.soldout = true;
+                  meals.push(meal);
+                  thisPage.setData({
+                    meals: meals
+                  });
+                }
+              }
+            })
+          }
         }
       })
     }
@@ -199,7 +235,11 @@ Page({
       meals[i].prices = "" + arr.join(" / ")
 
       // set "sold out" flag
-      meals[i].soldout = !this.data.futureDate && !this.data.cachedMealIds.includes(meals[i].id);
+      meals[i].soldout = false;
+
+      if (!meals[i].image.startsWith('https:')) {
+        meals[i].image = 'https:' + meals[i].image;
+      }
     }
   },
 
